@@ -32,5 +32,10 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.updateSalary();
 
     }
-
+    //Test Case To Retrieve Data Between Mentioned Range
+    @Test
+    public void retrieveData_betweenRange() {
+        EmployeePayrollService employeePayRollService=new EmployeePayrollService();
+        employeePayRollService.retrieveData_inBetween_Range();
+    }
 }
