@@ -9,10 +9,19 @@ import java.util.List;
 
 public class EmployeePayrollService {
     List< EmployeeData> list=new ArrayList<>();
+    public static Connection connection;
+    static {
+        try {
+            connection = EmployeePayrollDBService.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    //Method For Retrieving Employee Data From Database
     public List<EmployeeData> retrieveData()
     {
-        String sql="select * from  employee_payroll";
+        String sql="select * from employee_payroll";
         try {
             Connection connection = EmployeePayrollDBService.getConnection();
             Statement statement=connection.createStatement();
@@ -25,11 +34,31 @@ public class EmployeePayrollService {
                 double basic_pay=result.getDouble("basic_pay");
                 LocalDate start=result.getDate("start").toLocalDate();
                 list.add(new EmployeeData(id,name,gender,basic_pay,start));
-                System.out.println(list);
             }
+            System.out.println(list);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
+    }
+
+    //Method For Updating Salary In Database
+    public void updateSalary()
+    {
+        String sql="update employee_payroll set basic_pay=600000 where name='charlie'";
+        try {
+            Statement statement=connection.createStatement();
+            statement.executeUpdate(sql);
+            System.out.println("\n Updated Salary");
+            System.out.println(list);
+            connection.close();
+        }
+
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 }
