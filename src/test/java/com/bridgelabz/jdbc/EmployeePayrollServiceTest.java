@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.Assert;
 import org.junit.Test;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -45,5 +46,12 @@ public class EmployeePayrollServiceTest {
         EmployeePayrollService employeePayRollService=new EmployeePayrollService();
         Map<String, Double> emp_sum_salary = employeePayRollService.sumOf_BasicPay_Based_on_gender();
         System.out.println(emp_sum_salary);
+    }
+    //Test Case To Check If employee Is Properly Added To Database Or No
+    @Test
+    public void add_new_employee() {
+        EmployeePayrollService employeePayRollService=new EmployeePayrollService();
+        employeePayRollService.retrieveData();
+        employeePayRollService.add_new_employee_to_the_Database("Raunak","M",520000.00, LocalDate.now());
     }
 }

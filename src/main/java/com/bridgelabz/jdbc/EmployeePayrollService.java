@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public class EmployeePayrollService {
-    List< EmployeeData> list=new ArrayList<>();
+    List<EmployeeData> list = new ArrayList<>();
     public static Connection connection;
+
     static {
         try {
             connection = EmployeePayrollDBService.getConnection();
@@ -18,21 +19,19 @@ public class EmployeePayrollService {
     }
 
     //Method For Retrieving Employee Data From Database
-    public List<EmployeeData> retrieveData()
-    {
-        String sql="select * from employee_payroll";
+    public List<EmployeeData> retrieveData() {
+        String sql = "select * from employee_payroll";
         try {
             Connection connection = EmployeePayrollDBService.getConnection();
-            Statement statement=connection.createStatement();
-            ResultSet result=statement.executeQuery(sql);
-            while( result.next())
-            {
-                int id=result.getInt("id");
-                String name=result.getString("name");
-                String gender=result.getString("gender");
-                double basic_pay=result.getDouble("basic_pay");
-                LocalDate start=result.getDate("start").toLocalDate();
-                list.add(new EmployeeData(id,name,gender,basic_pay,start));
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()) {
+                int id = result.getInt("id");
+                String name = result.getString("name");
+                String gender = result.getString("gender");
+                double basic_pay = result.getDouble("basic_pay");
+                LocalDate start = result.getDate("start").toLocalDate();
+                list.add(new EmployeeData(id, name, gender, basic_pay, start));
             }
             System.out.println("\n Retrieved Data Is:");
             System.out.println(list);
@@ -45,23 +44,20 @@ public class EmployeePayrollService {
 
     //Method For Updating Salary In Database
     public void updateSalary() {
-        String sql="update employee_payroll set basic_pay=600000 where name='charlie'";
+        String sql = "update employee_payroll set basic_pay=600000 where name='charlie'";
         try {
-            Statement statement=connection.createStatement();
+            Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
             System.out.println("\n Updated Salary");
             System.out.println(list);
-        }
-
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
 
     //Method For Updating Salary In Database using Prepared Statement
-    public void updateUsing_PreparedStatement(String name){
+    public void updateUsing_PreparedStatement(String name) {
         String sql = "update employee_payroll set basic_pay=800000 where name=? ";
         try {
             PreparedStatement psmt = connection.prepareStatement(sql);
@@ -74,21 +70,19 @@ public class EmployeePayrollService {
     }
 
     //Method To Retrieve Data From Database Between given Range
-    public void retrieveData_inBetween_Range()
-    {
+    public void retrieveData_inBetween_Range() {
         String sql = "select * from employee_payroll where start between cast('2018-03-12' as Date ) AND DATE(NOW())";
-        List< EmployeeData> list=new ArrayList<>();
+        List<EmployeeData> list = new ArrayList<>();
         try {
-            Statement statement=connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(sql);
-            while( result.next())
-            {
-                int id=result.getInt("id");
-                String name=result.getString("name");
-                String gender=result.getString("gender");
-                double basic_pay=result.getDouble("basic_pay");
-                LocalDate start=result.getDate("start").toLocalDate();
-                list.add(new EmployeeData(id,name,gender,basic_pay,start));
+            while (result.next()) {
+                int id = result.getInt("id");
+                String name = result.getString("name");
+                String gender = result.getString("gender");
+                double basic_pay = result.getDouble("basic_pay");
+                LocalDate start = result.getDate("start").toLocalDate();
+                list.add(new EmployeeData(id, name, gender, basic_pay, start));
             }
             System.out.println("\n Retrieved Data In Range Is:");
             System.out.println(list);
@@ -99,41 +93,61 @@ public class EmployeePayrollService {
 
     //Method To get Avg Salary Based On Gender
     public Map<String, Double> avg_BasePay_Base_on_gender() {
-        String sql=" select gender, avg( basic_pay) as avg_basic_pay from employee_payroll group by gender";
-        Map<String,Double> empAvg_salary = new HashMap<>();
+        String sql = " select gender, avg( basic_pay) as avg_basic_pay from employee_payroll group by gender";
+        Map<String, Double> empAvg_salary = new HashMap<>();
         try {
-            Statement statement=connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(sql);
 
-            while( result.next())
-            {
-                String gender=result.getString("gender");
-                double basic_pay=result.getDouble("avg_basic_pay");
-                empAvg_salary.put(gender,basic_pay);
+            while (result.next()) {
+                String gender = result.getString("gender");
+                double basic_pay = result.getDouble("avg_basic_pay");
+                empAvg_salary.put(gender, basic_pay);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return  empAvg_salary;
+        return empAvg_salary;
     }
 
     //Method To get Sum Of Salary Based On Gender
     public Map<String, Double> sumOf_BasicPay_Based_on_gender() {
-        String sql=" select gender, sum( basic_pay) as sum_basic_pay from employee_payroll group by gender";
-        Map<String,Double> empSumOf_salary = new HashMap<>();
+        String sql = " select gender, sum( basic_pay) as sum_basic_pay from employee_payroll group by gender";
+        Map<String, Double> empSumOf_salary = new HashMap<>();
         try {
-            Statement statement=connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(sql);
 
-            while( result.next())
-            {
-                String gender=result.getString("gender");
-                double basic_pay=result.getDouble("sum_basic_pay");
-                empSumOf_salary.put(gender,basic_pay);
+            while (result.next()) {
+                String gender = result.getString("gender");
+                double basic_pay = result.getDouble("sum_basic_pay");
+                empSumOf_salary.put(gender, basic_pay);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return  empSumOf_salary;
+        return empSumOf_salary;
+    }
+
+    //Method To Add New Employee To Database
+    public void add_new_employee_to_the_Database(String name, String gender, double basic_pay, LocalDate startDate) {
+
+        String sql = String.format("insert into employee_payroll(name,gender,basic_pay,start)" + "values('%s','%s','%s','%s')", name, gender, basic_pay, Date.valueOf(startDate));
+        try {
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            int empId = -1;
+            if (rowAffected == 1) {
+                ResultSet result = statement.getGeneratedKeys();
+                if (result.next()) {
+                    empId = result.getInt(1);
+                }
+            }
+            list.add(new EmployeeData(empId, name, gender, basic_pay, startDate));
+            System.out.println(list);
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
     }
 }
