@@ -2,7 +2,9 @@ package com.bridgelabz.jdbc;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeePayrollService {
     List< EmployeeData> list=new ArrayList<>();
@@ -93,6 +95,45 @@ public class EmployeePayrollService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    //Method To get Avg Salary Based On Gender
+    public Map<String, Double> avg_BasePay_Base_on_gender() {
+        String sql=" select gender, avg( basic_pay) as avg_basic_pay from employee_payroll group by gender";
+        Map<String,Double> empAvg_salary = new HashMap<>();
+        try {
+            Statement statement=connection.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+
+            while( result.next())
+            {
+                String gender=result.getString("gender");
+                double basic_pay=result.getDouble("avg_basic_pay");
+                empAvg_salary.put(gender,basic_pay);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  empAvg_salary;
+    }
+
+    //Method To get Sum Of Salary Based On Gender
+    public Map<String, Double> sumOf_BasicPay_Based_on_gender() {
+        String sql=" select gender, sum( basic_pay) as sum_basic_pay from employee_payroll group by gender";
+        Map<String,Double> empSumOf_salary = new HashMap<>();
+        try {
+            Statement statement=connection.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+
+            while( result.next())
+            {
+                String gender=result.getString("gender");
+                double basic_pay=result.getDouble("sum_basic_pay");
+                empSumOf_salary.put(gender,basic_pay);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  empSumOf_salary;
     }
 }
